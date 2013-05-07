@@ -1,0 +1,32 @@
+{
+  "name": "swiftz",
+  "version": "0.1.0",
+  "description": "NodeJS implementation of Edusupplicant",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "sw": "./bin/sw",
+    "sw-login": "./bin/sw-login",
+    "sw-logout": "./bin/sw-logout",
+    "sw-status": "./bin/sw-status",
+    "sw-user": "./bin/sw-user"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/xingrz/swiftzjs.git"
+  },
+  "keywords": [
+    "Edusupplicant"
+  ],
+  "author": "XiNGRZ <chenxingyu92@gmail.com>",
+  "license": "BSD",
+  "readmeFilename": "README.md",
+  "dependencies": {
+    "async": "~0.2.8",
+    "commander": "~1.1.1",
+    "iconv-lite": "~0.2.8"
+  },
+  "devDependencies": {}
+}

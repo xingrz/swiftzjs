@@ -1,0 +1,14 @@
+#!/usr/bin/env node
+
+var swiftz = require('../')
+
+var program = require('commander')
+
+program
+  .usage('[options] [user]')
+  .option('-s, --server <server>', 'ip of authorization server')
+  .option('-e, --entry <entry>', 'the name of entry')
+
+program.parse(process.argv)
+
+swiftz.login.apply(swiftz, program.args)

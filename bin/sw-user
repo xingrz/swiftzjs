@@ -1,0 +1,21 @@
+#!/usr/bin/env node
+
+var swiftz = require('../')
+
+var program = require('commander')
+
+program
+  .command('add [user]')
+  .description('add an user')
+  .action(swiftz.add)
+
+program
+  .command('remove [user]')
+  .description('remove an/all user')
+  .action(swiftz.remove)
+
+program.parse(process.argv)
+
+if (!program.args.length) {
+  console.log('list')
+}
