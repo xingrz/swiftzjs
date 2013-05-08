@@ -4,11 +4,20 @@ var swiftz = require('../')
 
 var program = require('commander')
 
+function macAddress (mac) {
+  return /^[0-9A-Fa-f]{12}$/.test(mac)
+       ? mac
+       : '000000000000'
+}
+
 program
   .usage('[options] [user]')
   .option('-s, --server <server>', 'ip of authorization server')
   .option('-e, --entry <entry>', 'the name of entry')
+  .option('-m, --mac <address>', 'specific mac <address>', macAddress, '000000000000')
+  .option('-D, --no-daemon', 'do not run in daemon mode')
+  .option('-p, --privacy', 'do not remember username')
 
 program.parse(process.argv)
 
-swiftz.login.apply(swiftz, program.args)
+swiftz.login.apply(program, program.args)
