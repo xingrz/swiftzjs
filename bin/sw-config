@@ -1,0 +1,30 @@
+#!/usr/bin/env node
+
+var program = require('commander')
+  , config = require('../lib/cli/config')
+
+program
+  .command('interface [name]')
+  .description('set network interface')
+  .action(config.network)
+
+program
+  .command('ip [address]')
+  .description('set ip')
+  .action(config.ip)
+
+program
+  .command('server [address]')
+  .description('set server')
+  .action(config.server)
+
+program
+  .command('entry [entry]')
+  .description('set entry')
+  .action(config.entry)
+
+program.parse(process.argv)
+
+if (!program.args.length) {
+  config.all()
+}
