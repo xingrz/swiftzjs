@@ -14,6 +14,11 @@ program
   .action(config.ip)
 
 program
+  .command('mac [address]')
+  .description('set mac address')
+  .action(config.mac)
+
+program
   .command('server [address]')
   .description('set server')
   .action(config.server)
