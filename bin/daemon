@@ -7,24 +7,44 @@ var nssocket = require('nssocket')
 
 var CONFPATH = join(process.env.HOME, '.swiftz')
   , SOCKPATH = join(CONFPATH, 'swiftz.sock')
+  , PIDPATH  = join(CONFPATH, 'swiftz.pid')
 
 var socket = nssocket.createServer(function (socket) {
+  socket.data(['login'], function (data) {
+    socket.send(['login'], {
+      success: true
+    , message: '测试信息啦'
+    })
+  })
 
-  socket.data('login', function (data) {
-    console.log([].slice.call(arguments))
+  socket.data(['logout'], function () {
+    socket.send(['logout'])
+  })
+
+  socket.data(['status'], function () {
+    socket.send(['status'], {
+      online: true
+    , username: '123456'
+    , loginAt: +new Date()
+    })
   })
 
 }).listen(SOCKPATH, function () {
-  console.log('listening %s', SOCKPATH)
+  process.send('ready')
 })
 
-process.on('exit', function () {
-  if (socket) socket.close()
-  console.log('exit')
-})
+function cleanAll () {
+  if (socket) {
+    socket.close()
+    socket = undefined
+  }
 
-process.on('SIGINT', function () {
-  socket.close()
-  socket = undefined
-  console.log('exit by SIGINT')
-})
+  try {
+    fs.unlinkSync(PIDPATH)
+  } catch (e) {}
+}
+
+process.on('exit', cleanAll)
+process.on('SIGINT', cleanAll)
+
+fs.writeFileSync(PIDPATH, process.pid, 'utf-8')
