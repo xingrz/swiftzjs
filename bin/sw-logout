@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 
-require('../').logout.apply(
+require('../lib/cli/logout').logout.apply(
   require('commander').parse(process.argv)
 )

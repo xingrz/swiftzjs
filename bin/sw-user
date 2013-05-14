@@ -1,21 +1,25 @@
 #!/usr/bin/env node
 
-var swiftz = require('../')
-
 var program = require('commander')
+  , user = require('../lib/cli/user')
 
 program
   .command('add [user]')
   .description('add an user')
-  .action(swiftz.add)
+  .action(user.add)
 
 program
   .command('remove [user]')
   .description('remove an/all user')
-  .action(swiftz.remove)
+  .action(user.remove)
+
+program
+  .command('logs')
+  .description('show logs of current user')
+  .action(user.logs)
 
 program.parse(process.argv)
 
 if (!program.args.length) {
-  swiftz.users()
+  user.list()
 }

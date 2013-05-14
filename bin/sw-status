@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 
-require('../').status.apply(
+require('../lib/cli/status').status.apply(
   require('commander').parse(process.argv)
 )

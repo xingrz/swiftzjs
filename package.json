@@ -11,7 +11,8 @@
     "sw-login": "./bin/sw-login",
     "sw-logout": "./bin/sw-logout",
     "sw-status": "./bin/sw-status",
-    "sw-user": "./bin/sw-user"
+    "sw-user": "./bin/sw-user",
+    "sw-config": "./bin/sw-config"
   },
   "repository": {
     "type": "git",
@@ -26,7 +27,8 @@
   "dependencies": {
     "async": "~0.2.8",
     "commander": "~1.1.1",
-    "iconv-lite": "~0.2.8"
+    "iconv-lite": "~0.2.8",
+    "nssocket": "~0.5.1"
   },
   "devDependencies": {}
 }

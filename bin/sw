@@ -1,9 +1,7 @@
 #!/usr/bin/env node
 
-var swiftz = require('../')
-  , package = require('../package.json')
-
 var program = require('commander')
+  , package = require('../package.json')
 
 program
   .version(package.version)
