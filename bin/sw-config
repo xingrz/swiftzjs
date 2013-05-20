@@ -1,35 +1,129 @@
 #!/usr/bin/env node
 
 var program = require('commander')
+  , async = require('async')
   , config = require('../lib/cli/config')
 
-program
-  .command('interface [name]')
-  .description('set network interface')
-  .action(config.network)
+function setNetwork (name, ip, callback) {
+  config.network(name, ip, function (interfaces, done) {
+    var keys = Object.keys(interfaces)
+      , descriptions = keys.map(function (intf) {
+          return intf + ': ' + interfaces[intf].join(', ')
+        })
+
+    console.log('Choose an network interface')
+    program.choose(descriptions, function (i) {
+      process.stdin.pause() // work-around for #133
+      return done(keys[i])
+    })
+  }, function (addresses, done) {
+    console.log('Choose an ip address to use')
+    program.choose(addresses, function (i) {
+      process.stdin.pause() // work-around for #133
+      return done(addresses[i])
+    })
+  }, callback)
+}
+
+function setMac (address, callback) {
+  config.mac(address, function (done) {
+    program.prompt('Set the MAC address (defaults to 000000000000): ', function (mac) {
+      process.stdin.pause() // work-around for #133
+      return done(mac)
+    })
+  }, callback)
+}
+
+function setServer (address, callback) {
+  config.server(address, callback)
+}
+
+function setEntry (name, callback) {
+  config.entry(name, function (entries, done) {
+    console.log('Choose the entry for connection')
+    program.choose(entries, function (i) {
+      process.stdin.pause() // work-around for #133
+      return done(entries[i])
+    })
+  }, callback)
+}
+
+function displayInterface (err, eth, mac, ip) {
+  if (err) {
+    console.error(err)
+  } else {
+    if (mac) {
+      console.log('interface: %s, %s, %s', eth, mac, ip)
+    } else {
+      console.log('interface: %s, %s', eth, ip)
+    }
+  }
+}
+
+function displayServer (err, address) {
+  if (err) {
+    console.error(err)
+  } else {
+    console.log('server: %s', address)
+  }
+}
+
+function displayEntry (err, entry) {
+  if (err) {
+    console.error(err)
+  } else {
+    console.log('entry: %s', entry)
+  }
+}
 
 program
-  .command('ip [address]')
-  .description('set ip')
-  .action(config.ip)
+  .command('net [name] [ip]')
+  .description('set network interface')
+  .action(function (name, ip) {
+    setNetwork(name, ip, displayInterface)
+  })
 
 program
   .command('mac [address]')
   .description('set mac address')
-  .action(config.mac)
+  .action(function (address) {
+    setMac(address, displayInterface)
+  })
 
 program
   .command('server [address]')
   .description('set server')
-  .action(config.server)
+  .action(function (address) {
+    setServer(address, displayServer)
+  })
 
 program
   .command('entry [entry]')
   .description('set entry')
-  .action(config.entry)
+  .action(function (entry) {
+    setEntry(entry, displayEntry)
+  })
 
 program.parse(process.argv)
 
 if (!program.args.length) {
-  config.all()
+  async.series({
+    intf: function (next) {
+      setNetwork(null, null, next)
+    }
+  , server: function (next) {
+      setServer(null, next)
+    }
+  , entry: function (next) {
+      setEntry(null, next)
+    }
+  }, function (err, results) {
+    if (err) {
+      console.error(err)
+    } else {
+      displayInterface(null, results.intf[0], results.intf[1], results.intf[2])
+      displayServer(null, results.server)
+      displayEntry(null, results.entry)
+    }
+  })
 }
