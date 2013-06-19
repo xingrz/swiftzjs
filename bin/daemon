@@ -4,6 +4,7 @@ var nssocket = require('nssocket')
   , join = require('path').join
   , fs = require('fs')
   , net = require('net')
+  , daemonCLI = require('../lib/cli/daemon')
 
 var CONFPATH = join(process.env.HOME, '.swiftz')
   , SOCKPATH = join(CONFPATH, 'swiftz.sock')

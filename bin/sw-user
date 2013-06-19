@@ -14,6 +14,11 @@ program
   .action(user.remove)
 
 program
+  .command('update <user>')
+  .description('update password of <user>')
+  .action(user.update)
+
+program
   .command('logs')
   .description('show logs of current user')
   .action(user.logs)

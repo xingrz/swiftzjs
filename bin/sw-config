@@ -52,10 +52,10 @@ function displayInterface (err, eth, mac, ip) {
   if (err) {
     console.error(err)
   } else {
-    if (mac) {
-      console.log('interface: %s, %s, %s', eth, mac, ip)
+    if (mac && '000000000000' != mac) {
+      console.log('net: %s, %s, %s', eth, mac, ip)
     } else {
-      console.log('interface: %s, %s', eth, ip)
+      console.log('net: %s, %s', eth, ip)
     }
   }
 }
