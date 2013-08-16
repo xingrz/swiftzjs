@@ -15,7 +15,7 @@ gh-pages: clean
 	@$(NODE_BIN)/marked -i ./README.md -o ./gh-pages/_index.html --gfm
 	@cat misc/docs-header.html gh-pages/_index.html misc/docs-footer.html > gh-pages/index.html
 	@rm -f gh-pages/_index.html
-	#git subtree push --prefix gh-pages origin gh-pages
+	@git subtree push --prefix gh-pages origin gh-pages
 
 clean:
 	@rm -rf gh-pages
