@@ -13,16 +13,14 @@ SwiftzJS - Edusupplicant 的 NodeJS 实现
 
 ## 安装
 
-```sh
-$ git clone git://github.com/xingrz/swiftzjs.git
-$ cd swiftzjs
-$ sudo npm install -g
+```
+$ sudo npm install -g swiftz
 ```
 
 
 ## 使用
 
-```sh
+```
 $ sw login 账号
 ```
 
