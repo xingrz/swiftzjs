@@ -1,20 +1,21 @@
 #!/usr/bin/env node
 
 var program = require('commander')
-  , package = require('../package.json')
+  , pkg = require('../package.json')
 
 program
-  .version(package.version)
-  .command('login [user]', 'get connected to the internet')
-  .command('logout', 'get disconnected')
+  .version(pkg.version)
+  .command('on [user]', 'get connected to the internet')
+  .command('off', 'get disconnected')
   .command('status', 'show status')
   .command('user', 'manage users')
+  .command('config', 'manage configurations')
   .on('--help', function () {
     console.log('  Examples:')
     console.log('')
-    console.log('    $ sw login')
-    console.log('    $ sw login 1234567890')
-    console.log('    $ sw logout')
+    console.log('    $ sw on')
+    console.log('    $ sw on 1234567890')
+    console.log('    $ sw off')
     console.log('    $ sw status')
     console.log('')
   })

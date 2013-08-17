@@ -8,8 +8,8 @@
   },
   "bin": {
     "sw": "./bin/sw",
-    "sw-login": "./bin/sw-login",
-    "sw-logout": "./bin/sw-logout",
+    "sw-on": "./bin/sw-on",
+    "sw-off": "./bin/sw-off",
     "sw-status": "./bin/sw-status",
     "sw-user": "./bin/sw-user",
     "sw-config": "./bin/sw-config"

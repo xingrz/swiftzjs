@@ -1,30 +1,76 @@
 #!/usr/bin/env node
 
 var program = require('commander')
-  , user = require('../lib/cli/user')
+
+var User = require('../lib/data/user')
 
 program
-  .command('add [user]')
+  .command('ls')
+  .description('list all existed users')
+  .action(function () {
+    User.list(function (err, users) {
+      if (err) {
+        return console.error(err.stack)
+      }
+
+      if (users.length) {
+        console.log(users.join('\n'))
+      }
+    })
+  })
+
+program
+  .command('add <user>')
   .description('add an user')
-  .action(user.add)
+  .action(function (name) {
+    program.password('Enter password: ', function (password) {
+      User.add(name, password, function (err) {
+        if (err) {
+          if ('EEXIST' == err.code) {
+            console.log('')
+            console.log('  error: user \'%s\' already exists', name)
+            console.log('')
+            return
+          }
+
+          return console.error(err.stack)
+        }
+      })
+    })
+  })
 
 program
-  .command('remove [user]')
+  .command('rm [user]')
   .description('remove an/all user')
-  .action(user.remove)
+  .action(function (name) {
+    User.remove(name, function (err) {
+      if (err) {
+        if ('ENOENT' == err.code) {
+          console.log('')
+          console.log('  error: user \'%s\' not exists', name)
+          console.log('')
+          return
+        }
+
+        return console.error(err.stack)
+      }
+    })
+  })
 
 program
   .command('update <user>')
   .description('update password of <user>')
-  .action(user.update)
+  .action()
 
 program
   .command('logs')
   .description('show logs of current user')
-  .action(user.logs)
+  .action()
 
 program.parse(process.argv)
 
 if (!program.args.length) {
-  user.list()
+  User.list(function (err, users) {
+    console.log(users.join('\n'))
+  })
 }
