@@ -60,7 +60,11 @@ program
 program
   .command('update <user>')
   .description('update password of <user>')
-  .action()
+  .action(function (name) {
+    User.findToUpdate(name, function (err, user, update) {
+
+    })
+  })
 
 program
   .command('logs')
