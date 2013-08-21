@@ -1,14 +1,9 @@
 #!/usr/bin/env node
 
 var program = require('commander')
-  , join = require('path').join
-  , login = require('../lib/cli/login')
 
 program
   .usage('[options] [user]')
-  .option('-D, --no-daemon', 'do not run in daemon mode')
-  .option('-g, --guest', 'do not remember username')
+  .option('-p, --proxy <port>', 'also starts a proxy at <port>')
 
 program.parse(process.argv)
-
-login.login.apply(program, program.args)
