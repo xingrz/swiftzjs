@@ -15,10 +15,9 @@ server.on('request', function (incoming, response) {
     options.headers['connection'] = 'close'
   }
 
-  var request = http.request(options, function (proxying) {
-    response.writeHead(proxying.statusCode, proxying.headers)
-    proxying.pipe(response)
+  var start = new Date()
 
+  var request = http.request(options, function (proxying) {
     var incomingLeading = [
       options.method
     , options.path
@@ -31,12 +30,24 @@ server.on('request', function (incoming, response) {
     , http.STATUS_CODES[proxying.statusCode]
     ].join(' ')
 
+    response.writeHead(proxying.statusCode, proxying.headers)
+    proxying.pipe(response)
+
+    var end = new Date()
+
     console.log('---------------------------------')
     console.log('')
+    console.log('< ' + time(start))
     console.log(inspect(options.headers, incomingLeading))
     console.log('')
+    console.log('> ' + time(end) + ' - ' + ((end - start) + 'ms').magenta)
     console.log(inspect(proxying.headers, proxyingLeading))
     console.log('')
+  })
+
+  request.on('error', function (err) {
+    response.destroy()
+    console.error(err.stack)
   })
 
   incoming.pipe(request)
@@ -45,8 +56,9 @@ server.on('request', function (incoming, response) {
 server.on('connect', function (incoming, response, head) {
   var url = incoming.url.split(':')
 
-  var proxying = tcp.connect(url[1], url[0], function () {
+  var start = new Date()
 
+  var proxying = tcp.connect(url[1], url[0], function () {
     var proxyingLeading = 'HTTP/1.1 200 Connection Established'
 
     var incomingLeading = [
@@ -64,16 +76,28 @@ server.on('connect', function (incoming, response, head) {
     proxying.pipe(response)
     response.pipe(proxying)
 
+    var end = new Date()
+
     console.log('---------------------------------')
     console.log('')
+    console.log('< ' + time(start))
     console.log(inspect(incoming.headers, incomingLeading))
     console.log('')
+    console.log('> ' + time(end) + ' - ' + ((end - start) + 'ms').magenta)
     console.log(inspect({
-      'proxy-agent': 'Node'
-    , 'connection': 'close'
+      'proxy-agent': 'Node-Proxy'
     }, proxyingLeading))
     console.log('')
   })
+
+  proxying.on('error', function (err) {
+    console.error(err.stack)
+  })
+
+})
+
+server.on('error', function (err) {
+  console.error(err.stack)
 })
 
 /*server.on('upgrade', function (incoming, socket, head) {
@@ -94,7 +118,14 @@ function inspect (headers, leading) {
 
   var result = keys.map(function (key) {
     if (Array.isArray(headers[key])) {
-      headers[key] = headers[key].join('\r\n' + space(longest + 4))
+      headers[key] = headers[key].join('\n' + space(longest + 4))
+    }
+
+    if ('cookie' == key) {
+      headers[key] = headers[key].split('; ').map(function (item) {
+        var equal = item.indexOf('=')
+        return item.slice(0, equal + 1).grey + unescape(item.slice(equal + 1)).green
+      }).join(';\n'.grey + space(longest + 4))
     }
 
     return (space(longest - key.length + 2) + key + ': ').grey + headers[key].green
@@ -112,7 +143,7 @@ function inspect (headers, leading) {
     else {
       result.unshift('  '
       + split[0].red + ' '
-      + split.slice(1, -1).join(' ').white + ' '
+      + split.slice(1, -1).join(' ').yellow + ' '
       + split.slice(-1)[0].cyan
       )
     }
@@ -125,4 +156,8 @@ function space (times) {
   var spaces = ''
   for (; times--;) spaces += ' '
   return spaces
+}
+
+function time (date) {
+  return require('moment')(date).format('YYYY-MM-DD HH:mm:ss.SSS')
 }
